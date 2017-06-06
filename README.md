@@ -21,3 +21,17 @@ curl -H "Content-Type: application/json" -X PUT -d '{
     "lastName": "Simões Krebs"
 }'  http://localhost:8080/6
 ```
+
+```bash
+curl -H "Content-Type: application/json" -X POST -d '{
+    "username": "admin",
+    "password": "password"
+}' http://localhost:8080/sign-up
+```
+
+```bash
+curl -H "Content-Type: application/json" -X POST -d '{
+    "username": "admin",
+    "password": "password"
+}' http://localhost:8080/login
+```
