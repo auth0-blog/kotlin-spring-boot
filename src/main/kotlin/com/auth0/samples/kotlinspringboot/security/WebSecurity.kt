@@ -21,10 +21,11 @@ open class WebSecurity(val userDetailsService: UserDetailsService) : WebSecurity
 
 	override fun configure(http: HttpSecurity) {
 		http.csrf().disable().authorizeRequests()
-				.antMatchers(HttpMethod.POST, "/sign-up").permitAll()
+				.antMatchers(HttpMethod.POST, SIGN_UP_URL).permitAll()
 				.anyRequest().authenticated()
 				.and()
-				.addFilter(JWTLoginFilter(authenticationManager()))
+				.addFilter(JWTAuthenticationFilter(authenticationManager()))
+				.addFilter(JWTAuthorizationFilter(authenticationManager()))
 	}
 
 	override fun configure(auth: AuthenticationManagerBuilder?) {
