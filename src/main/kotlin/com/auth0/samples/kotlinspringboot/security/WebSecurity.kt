@@ -9,26 +9,27 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter
 import org.springframework.security.core.userdetails.UserDetailsService
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
+import com.auth0.spring.security.api.JwtWebSecurityConfigurer
+import org.springframework.beans.factory.annotation.Value
+
 
 @Configuration
 @EnableWebSecurity
-open class WebSecurity(val userDetailsService: UserDetailsService) : WebSecurityConfigurerAdapter() {
+open class WebSecurity : WebSecurityConfigurerAdapter() {
 
-	@Bean
-	fun bCryptPasswordEncoder(): BCryptPasswordEncoder {
-		return BCryptPasswordEncoder()
-	}
+	@Value("\${auth0.audience}")
+	private val audience: String? = null
 
+	@Value("\${auth0.issuer}")
+	private val issuer: String? = null
+
+	@Throws(Exception::class)
 	override fun configure(http: HttpSecurity) {
-		http.csrf().disable().authorizeRequests()
-				.antMatchers(HttpMethod.POST, SIGN_UP_URL).permitAll()
+		http.authorizeRequests()
 				.anyRequest().authenticated()
-				.and()
-				.addFilter(JWTAuthenticationFilter(authenticationManager()))
-				.addFilter(JWTAuthorizationFilter(authenticationManager()))
-	}
 
-	override fun configure(auth: AuthenticationManagerBuilder?) {
-		auth!!.userDetailsService(userDetailsService).passwordEncoder(bCryptPasswordEncoder())
+		JwtWebSecurityConfigurer
+				.forRS256(audience, issuer!!)
+				.configure(http)
 	}
 }
